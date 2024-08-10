@@ -21,12 +21,12 @@ class _MyWidgetState extends State<UserDashboard> {
   void _showLoadingDialog() {
     showDialog(
       context: context,
-      barrierDismissible: false, // Prevent dismissing by tapping outside
+      barrierDismissible: false, 
       builder: (BuildContext context) {
-        return AlertDialog(
+        return const AlertDialog(
           content: Row(
             mainAxisSize: MainAxisSize.min,
-            children: const [
+            children:  [
               CircularProgressIndicator(),
               SizedBox(width: 20),
               Text("Processing..."),
@@ -47,7 +47,6 @@ class _MyWidgetState extends State<UserDashboard> {
     _showLoadingDialog(); // Show loading dialog
 
     var status = await Permission.photos.status;
-    print(status);
     if (status.isDenied || status.isPermanentlyDenied) {
       await openAppSettings();
     }
@@ -59,12 +58,7 @@ class _MyWidgetState extends State<UserDashboard> {
         await _excelService.pickAndReadExcelFile();
         showSnackBar('Excel file processed successfully!', Colors.green);
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error processing Excel file: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+       
         showSnackBar('Error processing Excel file, try another file', Colors.red);
       } finally {
         _hideLoadingDialog(); // Hide loading dialog
