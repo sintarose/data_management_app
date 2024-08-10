@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data_management_app/app_utilities/dialog_helper.dart';
+import 'package:data_management_app/service/user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../../service/user_service.dart';
 
 class UserDashboard extends StatefulWidget {
   const UserDashboard({super.key});
@@ -15,12 +15,36 @@ class UserDashboard extends StatefulWidget {
 class _MyWidgetState extends State<UserDashboard> {
   final ExcelService _excelService = ExcelService();
   final CollectionReference fetchData =
-  FirebaseFirestore.instance.collection("SaveData");
+      FirebaseFirestore.instance.collection("SaveData");
 
+  // Method to show the loading dialog
+  void _showLoadingDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent dismissing by tapping outside
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: const [
+              CircularProgressIndicator(),
+              SizedBox(width: 20),
+              Text("Processing..."),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  // Method to hide the loading dialog
+  void _hideLoadingDialog() {
+    Navigator.of(context).pop();
+  }
 
   // to upload excel
   void _uploadExcelFile() async {
-    showLoadingDialog(context); // Show loading dialog
+    _showLoadingDialog(); // Show loading dialog
 
     var status = await Permission.photos.status;
     print(status);
@@ -43,10 +67,10 @@ class _MyWidgetState extends State<UserDashboard> {
         );
         showSnackBar('Error processing Excel file, try another file', Colors.red);
       } finally {
-        hideLoadingDialog(); // Hide loading dialog
+        _hideLoadingDialog(); // Hide loading dialog
       }
     } else {
-      hideLoadingDialog(); // Hide loading dialog if permission is not granted
+      _hideLoadingDialog(); // Hide loading dialog if permission is not granted
     }
   }
 
@@ -56,7 +80,7 @@ class _MyWidgetState extends State<UserDashboard> {
       appBar: AppBar(
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
-        title: const Text("Dashboard"),
+        title: const Text("Fetch Data From Firebase"),
       ),
       body: StreamBuilder(
         stream: fetchData.snapshots(),
@@ -66,7 +90,7 @@ class _MyWidgetState extends State<UserDashboard> {
               itemCount: streamSnapshot.data!.docs.length,
               itemBuilder: (context, index) {
                 final DocumentSnapshot documentSnapshot =
-                streamSnapshot.data!.docs[index];
+                    streamSnapshot.data!.docs[index];
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Card(
@@ -81,18 +105,18 @@ class _MyWidgetState extends State<UserDashboard> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              documentSnapshot['State'],
+                              documentSnapshot['District'],
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20,
                               ),
                             ),
                             Text(
-                              documentSnapshot['District'],
+                              documentSnapshot['City'],
                               style: const TextStyle(fontSize: 16),
                             ),
                             Text(
-                              documentSnapshot['City'],
+                              documentSnapshot['State'],
                               style: const TextStyle(fontSize: 16),
                             ),
                           ],
