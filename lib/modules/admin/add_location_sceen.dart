@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data_management_app/app_utilities/app_bar.dart';
 import 'package:data_management_app/auth_service/login_page.dart';
+import 'package:data_management_app/modules/admin/admin_dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../app_utilities/dialog_helper.dart';
@@ -79,7 +80,7 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
                   _districtController.clear();
                   _cityController.clear();
                   showSuccessDialog(context);
-                  Get.to(const LoginScreen());
+                  Get.to(const AdminDashboard());
                 } else {
                   showValidationError(context);
                 }
