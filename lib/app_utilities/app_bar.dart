@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
-AppBar appBar() => AppBar(
+AppBar appBar(String pageName) => AppBar(
   leading: InkWell(
       onTap: () => Get.back(),
       child: const Icon(
@@ -10,8 +9,9 @@ AppBar appBar() => AppBar(
         color: Colors.white,
         size: 20,
       )),
-  backgroundColor: const Color.fromARGB(255, 3, 38, 90),
+      backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,   
   elevation: 5,
-  title:const Text("News Today",style: TextStyle(color: Colors.white),),
+  title: Text(pageName,style:const TextStyle(color: Colors.white),),
 
 );

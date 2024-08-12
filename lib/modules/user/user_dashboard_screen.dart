@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:data_management_app/app_utilities/app_bar.dart';
 import 'package:data_management_app/app_utilities/dialog_helper.dart';
+import 'package:data_management_app/modules/user/weather_update_screen.dart';
 import 'package:data_management_app/service/user_service.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
-
 
 class UserDashboard extends StatefulWidget {
   const UserDashboard({super.key});
@@ -21,12 +23,12 @@ class _MyWidgetState extends State<UserDashboard> {
   void _showLoadingDialog() {
     showDialog(
       context: context,
-      barrierDismissible: false, 
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return const AlertDialog(
           content: Row(
             mainAxisSize: MainAxisSize.min,
-            children:  [
+            children: [
               CircularProgressIndicator(),
               SizedBox(width: 20),
               Text("Processing..."),
@@ -43,7 +45,7 @@ class _MyWidgetState extends State<UserDashboard> {
   }
 
   // to upload excel
-  void _uploadExcelFile() async {
+  void _uploadExcelFile(String city) async {
     _showLoadingDialog(); // Show loading dialog
 
     var status = await Permission.photos.status;
@@ -58,10 +60,13 @@ class _MyWidgetState extends State<UserDashboard> {
         await _excelService.pickAndReadExcelFile();
         showSnackBar('Excel file processed successfully!', Colors.green);
       } catch (e) {
-       
-        showSnackBar('Error processing Excel file, try another file', Colors.red);
+        showSnackBar(
+            'Error processing Excel file, try another file', Colors.red);
       } finally {
         _hideLoadingDialog(); // Hide loading dialog
+        Get.to(WeatherUpdateScreen(
+          cityname: city,
+        ));
       }
     } else {
       _hideLoadingDialog(); // Hide loading dialog if permission is not granted
@@ -71,11 +76,7 @@ class _MyWidgetState extends State<UserDashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
-        title: const Text("Fetch Data From Firebase"),
-      ),
+      appBar: appBar('User Dashboard'),
       body: StreamBuilder(
         stream: fetchData.snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
@@ -116,7 +117,9 @@ class _MyWidgetState extends State<UserDashboard> {
                           ],
                         ),
                         trailing: ElevatedButton(
-                          onPressed: _uploadExcelFile,
+                          onPressed: () {
+                            _uploadExcelFile(documentSnapshot['City']);
+                          },
                           child: const Text("Upload Excel"),
                         ),
                       ),

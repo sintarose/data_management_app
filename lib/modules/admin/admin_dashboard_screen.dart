@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:data_management_app/app_utilities/app_bar.dart';
 import 'package:flutter/material.dart';
 
 import 'add_location_sceen.dart';
@@ -17,11 +18,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
-        title: const Text("Dashboard"),
-      ),
+      appBar: appBar('Dashboard'),
       body: StreamBuilder(
         stream: fetchData.snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
